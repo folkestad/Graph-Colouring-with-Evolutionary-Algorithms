@@ -1,0 +1,4 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "julia.executablePath": "/Applications/Julia-0.6.app/Contents/Resources/julia/bin/julia"
+}
