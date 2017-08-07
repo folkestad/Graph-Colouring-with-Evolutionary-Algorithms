@@ -109,13 +109,6 @@ function do_and_print(graph, which)
   @printf("End of results for graph %s\n\n", which)
 end
 
-# fitness_rating = fitness([0 1 0;1 0 1;0 1 0], [1,2,2])
-# println("$fitness_rating")
-# a = Set([1,2,2,3,4,5,4,41])
-# for animal in a
-#     println("$animal is a mammal")
-# end 
-# println("$(length(a))")
-# do_and_print(graph_crown(), "CROWN")
+do_and_print(graph_crown(), "CROWN")
 # do_and_print(graph_peterson(), "PETERSON")
-do_and_print(graph_wheel(), "WHEEL")
+# do_and_print(graph_wheel(), "WHEEL")
