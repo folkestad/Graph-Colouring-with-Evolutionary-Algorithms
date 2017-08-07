@@ -94,7 +94,7 @@ function ev11(p, g, graph) # p = population size, g = number of generations, gra
 end
 
 function do_and_print(graph, which)
-  answer = ev11(50, 1000, graph)
+  answer = ev11(10, 500, graph) # p = 50, g = 1000 solves every graph...
   best = answer[1]
   best_fit = fitness(graph, answer[1])
   @printf("Results for graph %s\n", which)
@@ -109,6 +109,6 @@ function do_and_print(graph, which)
   @printf("End of results for graph %s\n\n", which)
 end
 
-do_and_print(graph_crown(), "CROWN")
+# do_and_print(graph_crown(), "CROWN")
 # do_and_print(graph_peterson(), "PETERSON")
-# do_and_print(graph_wheel(), "WHEEL")
+do_and_print(graph_wheel(), "WHEEL")
