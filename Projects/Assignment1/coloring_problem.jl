@@ -239,10 +239,155 @@ function evac_stm(p, g, graph) # p = population size, g = number of generations,
   return pop # Return the population after modifying it over g generations
 end
 
+function evn(p, g, graph)
+  n = 4
+  pop = fill([0], p) # Create array of size p which then becomes the population
+  for i in 1:p # Fill array with generated solutions
+    pop[i] = generate(graph)
+  end
+  for j in 1:g # Do changes to the population for g generations
+    for k in 1:n
+      x = rand(1:p) # Select a random member of the population, ind_1
+      x_ = mutate(pop[x]) # Perform a modification to the random member x which will be called x_
+      y = rand(1:p) # Select a random member of the population, y
+      if fitness(graph, x_) < fitness(graph, pop[y]) # Fitness should be as small as possible in this case
+        pop[y] = x_
+      end
+    end
+  end
+  return pop # Return the population after modifying it over g generations
+end
+
+function evm(p, g, graph)
+  m = 4
+  pop = fill([0], p) # Create array of size p which then becomes the population
+  for i in 1:p # Fill array with generated solutions
+    pop[i] = generate(graph)
+  end
+  for j in 1:g # Do changes to the population for g generations
+    x = rand(1:p) # Select a random member of the population, ind_1
+    x_ = mutate(pop[x]) # Perform a modification to the random member x which will be called x_
+    for k in 1:m
+      y = rand(1:p) # Select a random member of the population, y
+      if fitness(graph, x_) < fitness(graph, pop[y]) # Fitness should be as small as possible in this case
+        pop[y] = x_
+      end
+    end
+  end
+  return pop # Return the population after modifying it over g generations
+end
+
+function evnm(p, g, graph)
+  n = 4
+  m = 2
+  pop = fill([0], p) # Create array of size p which then becomes the population
+  for i in 1:p # Fill array with generated solutions
+    pop[i] = generate(graph)
+  end
+  for j in 1:g # Do changes to the population for g generations
+    for k in 1:n
+      x = rand(1:p) # Select a random member of the population, ind_1
+      x_ = mutate(pop[x]) # Perform a modification to the random member x which will be called x_
+      for l in 1:m
+        y = rand(1:p) # Select a random member of the population, y
+        if fitness(graph, x_) < fitness(graph, pop[y]) # Fitness should be as small as possible in this case
+          pop[y] = x_
+        end
+      end
+    end
+  end
+  return pop # Return the population after modifying it over g generations
+end
+
+function evanm(p, g, graph) # Best so far
+  n = 4
+  m = 2
+  pop = fill([0], p) # Create array of size p which then becomes the population
+  for i in 1:p # Fill array with generated solutions
+    pop[i] = generate(graph)
+  end
+  for j in 1:g # Do changes to the population for g generations
+    for k in 1:n
+      x = rand(1:p) # Select a random member of the population, ind_1
+      s = (g-j+1)/g
+      x_ = mutate_s(pop[x], s) # Perform a modification to the random member x which will be called x_
+      for l in 1:m
+        y = rand(1:p) # Select a random member of the population, y
+        if fitness(graph, x_) < fitness(graph, pop[y]) # Fitness should be as small as possible in this case
+          pop[y] = x_
+        end
+      end
+    end
+  end
+  return pop # Return the population after modifying it over g generations
+end
+
+function evanm_stm(p, g, graph) # Best so far
+  n = 8
+  m = 4
+  mem_size = 20
+  short_term_memory = fill(fill(-1, size(graph, 1)), mem_size)
+  mem_index = 1
+  pop = fill([0], p) # Create array of size p which then becomes the population
+  for i in 1:p # Fill array with generated solutions
+    pop[i] = generate(graph)
+  end
+  for j in 1:g # Do changes to the population for g generations
+    for k in 1:n
+      x = rand(1:p) # Select a random member of the population, ind_1
+      s = (g-j+1)/g
+      x_ = mutate_s(pop[x], s) # Perform a modification to the random member x which will be called x_
+      for l in 1:m
+        y = rand(1:p) # Select a random member of the population, y
+        if !(x_ in short_term_memory) && fitness(graph, x_) < fitness(graph, pop[y]) # Fitness should be as small as possible in this case
+          pop[y] = x_
+          short_term_memory[mem_index] = x_
+          mem_index = (mem_index % mem_size) + 1 
+        end
+      end
+    end
+  end
+  return pop # Return the population after modifying it over g generations
+end
+
+function evacnm(p, g, graph)
+  n = 4
+  m = 2
+  pop = fill([0], p) # Create array of size p which then becomes the population
+  for i in 1:p # Fill array with generated solutions
+    pop[i] = generate(graph)
+  end
+  for j in 1:g # Do changes to the population for g generations
+    for k in 1:n
+      s = (g-j+1)/g
+      x = rand(1:p) # Select a random member of the population, ind_1
+      x_ = mutate_s(pop[x], s)  # Perform a modification to the random member x which will be called x_
+      for l in 1:m
+        y = rand(1:p) # Select a random member of the population, y
+        p1 = rand(1:p)
+        p2 = rand(1:p)
+        c = crossover(pop[p1], pop[p2])
+        if fitness(graph, x_) < fitness(graph, pop[y]) # Fitness should be as small as possible in this case
+          pop[y] = x_
+        end
+        fit_c = fitness(graph, c)
+        fit_p1 = fitness(graph, pop[p1])
+        fit_p2 = fitness(graph, pop[p2])
+        if fit_c < fit_p1 && fit_p1 > fit_p2 
+          pop[p1] = c
+        elseif fit_c < fit_p2
+          pop[p2] = c
+        end
+      end
+    end
+  end
+  return pop # Return the population after modifying it over g generations
+end
+
 function do_and_print(graph, which, ea)
   p = 10
   g = 200
-  answer = ea(p, g, graph) # p = 50, g = 1000 solves every graph...
+  answer = ea(p, g, graph)
   best = answer[1]
   best_fit = fitness(graph, answer[1])
   @printf("Results for graph %s\n", which)
@@ -273,7 +418,7 @@ function do_and_print(graph, which, ea)
   @printf("Avg best fitness over %d trials is %f\n\n", n_trials, avg_result)
 end
 
-ea = evc
+ea = evanm_stm
 do_and_print(graph_crown(), "CROWN (Optimal 2)", ea)
 do_and_print(graph_peterson(), "PETERSON (Optimal 3)", ea)
 do_and_print(graph_wheel(), "WHEEL (Optimal 4)", ea)
